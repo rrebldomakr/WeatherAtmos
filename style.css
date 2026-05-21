@@ -376,3 +376,30 @@ body.weather-snow .particle-snow-container {
   0% { background-position: 0px 0px; }
   100% { background-position: 50px 360px; }
 }
+
+.wind-gauge-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.compass-ring {
+  width: 44px;
+  height: 44px;
+  border: 2px dashed var(--glass-border);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.compass-needle {
+  width: 4px;
+  height: 18px;
+  background: var(--accent-color);
+  border-radius: 2px;
+  /* Uses JS custom property mapping for hardware-accelerated rotation */
+  transform: rotate(var(--wind-direction, 0deg));
+  transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
