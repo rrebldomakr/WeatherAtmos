@@ -308,3 +308,71 @@ body.weather-snow {
   0%, 95%, 99% { filter: brightness(1) contrast(1); }
   96%, 98% { filter: brightness(1.4) contrast(1.15); }
 }
+
+/* ==========================================================================
+   7. PARTICLE SYSTEM ENGINE (PERFORMANCE DRIVEN ARCHITECTURE)
+   ========================================================================== */
+.weather-particles-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* Keeps layout strictly layered behind the glass app card */
+  pointer-events: none; /* Allows click pass-through safety handles */
+  overflow: hidden;
+}
+
+/* Base structural setups for moving layers */
+.particle-rain-container, 
+.particle-snow-container, 
+.particle-mist-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+}
+
+/* --- RAIN ANIMATION GENERATION --- */
+body.weather-rain .particle-rain-container,
+body.weather-drizzle .particle-rain-container {
+  opacity: 0.25;
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 80%), 
+                    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 100% 100%, 25px 100%;
+  animation: rainStreakFall 0.6s linear infinite;
+}
+
+@keyframes rainStreakFall {
+  0% { background-position: 0px 0px, 0px 0px; }
+  100% { background-position: 40px 1000px, 0px 0px; }
+}
+
+/* --- MIST/FOG ANIMATION GENERATION --- */
+body.weather-mist .particle-mist-container,
+body.weather-fog .particle-mist-container {
+  opacity: 0.4;
+  background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.08) 0%, transparent 60%),
+              radial-gradient(circle at 70% 60%, rgba(255,255,255,0.05) 0%, transparent 70%);
+  animation: mistDriftRoll 12s linear infinite alternate;
+}
+
+@keyframes mistDriftRoll {
+  0% { transform: scale(1) translate(0px, 0px); filter: blur(5px); }
+  100% { transform: scale(1.2) translate(30px, 15px); filter: blur(8px); }
+}
+
+/* --- SNOW ANIMATION GENERATION --- */
+body.weather-snow .particle-snow-container {
+  opacity: 0.6;
+  background-image: radial-gradient(circle at 15px 15px, #ffffff 2px, transparent 0),
+                    radial-gradient(circle at 55px 75px, #ffffff 1.5px, transparent 0);
+  background-size: 120px 120px;
+  animation: snowDriftFall 8s linear infinite;
+}
+
+@keyframes snowDriftFall {
+  0% { background-position: 0px 0px; }
+  100% { background-position: 50px 360px; }
+}
