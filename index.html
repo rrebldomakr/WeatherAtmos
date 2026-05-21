@@ -8,23 +8,17 @@
 </head>
 <body>
 
-  <!-- ==========================================================================
-     DYNAMIC METEOROLOGICAL PARTICLE ENGINE
-     These containers act as hook layers for active CSS background animations.
-     ========================================================================== -->
+  <!-- Background Particle Stream System -->
   <div class="weather-particles-layer">
     <div class="particle-rain-container"></div>
     <div class="particle-snow-container"></div>
     <div class="particle-mist-container"></div>
   </div>
 
-  <!-- ==========================================================================
-     MAIN APPLICATION VIEWPORT HOUSING
-     ========================================================================== -->
   <div class="app-container">
     <main class="weather-card">
       
-      <!-- Search Controller Input Matrix -->
+      <!-- Interface Control Block -->
       <section class="search-box">
         <input 
           type="text" 
@@ -36,32 +30,40 @@
         >
       </section>
 
-      <!-- Application Initialization Slate (Default Landing State) -->
+      <!-- Severe Weather System Alert Banner -->
+      <div id="severe-alert-system" class="hidden severe-alert-banner"></div>
+
+      <!-- Static Welcome State Box -->
       <section id="welcome-msg" class="welcome-container">
         <h2 class="welcome-title">Weather Dashboard</h2>
-        <p class="welcome-subtitle">Enter a city to display high-resolution real-time meteorological vectors.</p>
+        <p class="welcome-subtitle">Enter a geographic target location to evaluate system alerts, astronomical tracks, and real-time telemetry.</p>
       </section>
 
-      <!-- Active Presentation Data Stream Layout -->
+      <!-- Asynchronous Output Stream Slate -->
       <section id="weather-info" class="hidden">
         
-        <!-- Primary Structural Display Targets -->
         <div class="weather-main-details">
           <h1 id="city-display" class="city-name"></h1>
           <p id="date-display" class="date-stamp"></p>
           <div id="temp-display" class="temperature-display-group"></div>
           <p id="desc-display" class="weather-condition-desc"></p>
+          <p id="astro-display" class="astro-timeline-msg"></p>
         </div>
 
-        <!-- Secondary Performance Metric Telemetry Grid -->
         <div class="metadata-grid">
           <div class="meta-item">
             <span class="meta-label">Humidity</span>
             <span id="humidity-display" class="meta-value"></span>
           </div>
-          <div class="meta-item">
-            <span class="meta-label">Wind Velocity</span>
-            <span id="wind-display" class="meta-value"></span>
+          
+          <div class="meta-item wind-gauge-box">
+            <div>
+              <span class="meta-label">Wind Velocity</span>
+              <span id="wind-display" class="meta-value"></span>
+            </div>
+            <div class="compass-ring">
+              <div class="compass-needle"></div>
+            </div>
           </div>
         </div>
 
