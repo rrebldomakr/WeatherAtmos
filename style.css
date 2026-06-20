@@ -2,15 +2,12 @@
    1. DESIGN TOKENS & ROOT ARCHITECTURE
    ========================================================================== */
 :root {
-  --bg-gradient: transparent;
   --glass-bg: rgba(15, 23, 42, 0.35);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-glow: rgba(255, 255, 255, 0.03);
-  
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --accent-color: #6366f1;
-  
   --card-radius: 24px;
   --input-radius: 14px;
   --wind-direction: 0deg;
@@ -34,7 +31,7 @@ body {
   min-height: 100vh;
   font-family: system-ui, -apple-system, sans-serif;
   color: var(--text-primary);
-  overflow: hidden; /* Locks the viewport so the 3D globe doesn't cause scrollbars */
+  overflow: hidden; 
   position: relative;
 }
 
@@ -59,25 +56,21 @@ body {
    2. APPLICATION LAYOUT CONTAINER
    ========================================================================== */
 .app-container {
-  /* HARD-PINNED ABSOLUTE CENTERING */
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  
   width: 100%;
   max-width: 480px;
   padding: 24px;
   perspective: 1000px;
   z-index: 10;
-  /* Allows mouse events to pass through the empty space to the globe */
   pointer-events: none; 
 }
 
 .weather-card {
   width: 100%;
   max-width: 440px;
-  /* Re-enable pointer events just for the glass card */
   pointer-events: auto;
   margin: 0 auto;
   
@@ -242,10 +235,8 @@ body {
   background: rgba(15, 23, 42, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  
   padding: 18px;
   border-radius: 16px;
   display: flex;
@@ -320,7 +311,6 @@ body {
   50% { opacity: 1; box-shadow: 0 0 14px rgba(239, 68, 68, 0.25); }
 }
 
-/* Meteorological Context Injectors (Glows behind the card) */
 body.weather-clear .weather-card {
   box-shadow: 0 30px 70px rgba(245, 158, 11, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.1);
   --accent-color: #f59e0b;
@@ -357,7 +347,7 @@ body.weather-snow .weather-card {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1; /* Sits above globe, below UI */
+  z-index: 1; 
   pointer-events: none;
   overflow: hidden;
 }
