@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Real-Time Weather Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/globe.gl"></script>
 </head>
 <body>
 
-  <!-- Background Particle Stream System -->
+  <div id="globe-viz" class="globe-background"></div>
+
   <div class="weather-particles-layer">
     <div class="particle-rain-container"></div>
     <div class="particle-snow-container"></div>
@@ -18,7 +20,6 @@
   <div class="app-container">
     <main class="weather-card">
       
-      <!-- Interface Control Block -->
       <section class="search-box">
         <input 
           type="text" 
@@ -30,16 +31,13 @@
         >
       </section>
 
-      <!-- Severe Weather System Alert Banner -->
       <div id="severe-alert-system" class="hidden severe-alert-banner"></div>
 
-      <!-- Static Welcome State Box -->
       <section id="welcome-msg" class="welcome-container">
-        <h2 class="welcome-title">Weather Dashboard</h2>
+        <h2 class="welcome-title">Global Pass Tracker</h2>
         <p class="welcome-subtitle">Enter a geographic target location to evaluate system alerts, astronomical tracks, and real-time telemetry.</p>
       </section>
 
-      <!-- Asynchronous Output Stream Slate -->
       <section id="weather-info" class="hidden">
         
         <div class="weather-main-details">
