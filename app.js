@@ -1,7 +1,7 @@
 /**
  * ==========================================================================
  * REAL-TIME WEATHER DASHBOARD CORE PIPELINE ENGINE
- * Architectural Framework: Vanillajs Asynchronous Operations Layer
+ * Architectural Framework: Vanillajs Asynchronous Operations Layer + WebGL
  * ==========================================================================
  */
 
@@ -13,17 +13,51 @@ let activeAbortController = null;
 
 // Memory caching system parameters
 const weatherCache = new Map();
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5-Minute Lifespan Threshold
+const CACHE_TTL_MS = 5 * 60 * 1000; 
+
+// ==========================================================================
+// WEBGL 3D GLOBE ENGINE INITIALIZATION
+// ==========================================================================
+const globeCanvas = document.getElementById('globe-viz');
+let worldGlobe = null;
+
+if (globeCanvas) {
+    worldGlobe = Globe()(globeCanvas)
+        .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg') // High-contrast dark mode earth
+        .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+        .backgroundColor('#070a13') // Matches your deep space background
+        .pointOfView({ altitude: 2.5 });
+
+    // Idle rotation when waiting for input
+    worldGlobe.controls().autoRotate = true;
+    worldGlobe.controls().autoRotateSpeed = 0.8;
+    worldGlobe.controls().enableZoom = false; // Locks the mouse wheel so the page doesn't scroll wildly
+}
+
+function updateGlobeLocation(lat, lng) {
+    if (!worldGlobe) return;
+    
+    // Stop auto-rotation to focus on the target
+    worldGlobe.controls().autoRotate = false;
+
+    // Inject the blinking beacon at the exact API coordinates
+    worldGlobe.ringsData([{ lat: lat, lng: lng }])
+        .ringColor(() => '#6366f1') // Your CSS accent color
+        .ringMaxRadius(6)
+        .ringPropagationSpeed(3)
+        .ringRepeatPeriod(800);
+
+    // Execute 2-second cinematic flight path to the city
+    worldGlobe.pointOfView({ lat: lat, lng: lng, altitude: 1.2 }, 2000);
+}
+
 
 /**
  * CORE ASYNC ORCHESTRATOR
- * Interlaces network streams, in-memory validation rules, and cancellation handles.
- * @param {string} city - Raw search string parameter
  */
 async function fetchWeather(city) {
     const normalizedCity = city.toLowerCase().trim();
 
-    // 1. IN-MEMORY CACHE LIFECYCLE EVALUATION
     if (weatherCache.has(normalizedCity)) {
         const cachedEntry = weatherCache.get(normalizedCity);
         const systemTimeNow = Date.now();
@@ -33,15 +67,12 @@ async function fetchWeather(city) {
             renderWeatherDashboard(cachedEntry.payload);
             return;
         } else {
-            console.log(`%c [Cache Expired] Purging record for: "${city}".`, 'color: #ff5722;');
             weatherCache.delete(normalizedCity);
         }
     }
 
-    // 2. NETWORK CONTEXT STREAM CLEANUP (Abort Flight Layer)
     if (activeAbortController) {
         activeAbortController.abort();
-        console.log(`%c Active request cancelled to favor newer stream pipeline context.`, 'color: #ffb300;');
     }
 
     activeAbortController = new AbortController();
@@ -58,12 +89,10 @@ async function fetchWeather(city) {
 
         const data = await response.json();
         
-        // 3. PERSIST VALID RECORD TO DATA LAYER
         weatherCache.set(normalizedCity, {
             timestamp: Date.now(),
             payload: data
         });
-        console.log(`%c [Cache Write] Saved server payload for: "${city}".`, 'color: #2196f3;');
 
         renderWeatherDashboard(data);
 
@@ -83,14 +112,12 @@ async function fetchWeather(city) {
 
 /**
  * TELEMETRY VISUALIZATION LAYER
- * Parses calculations, structures theme scales, maps properties, and handles DOM toggles.
- * @param {Object} data - API Payload Object
  */
 function renderWeatherDashboard(data) {
     const weatherInfo = document.getElementById("weather-info");
     const welcomeMsg = document.getElementById("welcome-msg");
 
-    // 1. Map Core Text Metrics
+    // Map Core Text Metrics
     document.getElementById("city-display").innerText = data.name;
     document.getElementById("temp-display").innerText = Math.round(data.main.temp);
     document.getElementById("desc-display").innerText = data.weather[0].description;
@@ -100,28 +127,30 @@ function renderWeatherDashboard(data) {
         weekday: 'long', month: 'short', day: 'numeric'
     });
 
-    // 2. Hardware-Accelerated Vector Compass Evaluation
+    // Hardware-Accelerated Vector Compass
     document.documentElement.style.setProperty('--wind-direction', `${data.wind.deg}deg`);
 
-    // 3. Astronomical Daylight Tracking Calculations
+    // Astronomical Daylight Tracking
     calculateAstroCycleTrack(data.dt, data.sys.sunrise, data.sys.sunset);
 
-    // 4. Critical Meteorological Hazard Evaluations
+    // Hazard Evaluations
     evaluateSystemSafetyAlerts(data.weather[0].id);
 
-    // 5. Background Ambiance State Injection Layer
+    // Theme Injection
     const coreWeatherCondition = data.weather[0].main.toLowerCase();
-    document.body.className = ""; // Drop all legacy theme states
+    document.body.className = ""; 
     document.body.classList.add(`weather-${coreWeatherCondition}`);
 
-    // 6. Viewport Visibility Frame Adjuster
+    // TRIGGER GLOBE TRACKING
+    if (data.coord) {
+        updateGlobeLocation(data.coord.lat, data.coord.lon);
+    }
+
+    // Viewport Toggle
     if (weatherInfo) weatherInfo.classList.remove("hidden");
     if (welcomeMsg) welcomeMsg.classList.add("hidden");
 }
 
-/**
- * EVALUATE DAYLIGHT TIMELINE POSITIONS
- */
 function calculateAstroCycleTrack(currentTime, sunriseTimestamp, sunsetTimestamp) {
     const astroDisplayElement = document.getElementById("astro-display");
     if (!astroDisplayElement) return;
@@ -138,17 +167,13 @@ function calculateAstroCycleTrack(currentTime, sunriseTimestamp, sunsetTimestamp
     }
 }
 
-/**
- * HIGH-ALERT SAFETY ADVISORY EVALUATIONS
- */
 function evaluateSystemSafetyAlerts(conditionId) {
     const alertSystemBanner = document.getElementById("severe-alert-system");
     if (!alertSystemBanner) return;
 
-    // Check OpenWeather ID ranges for severe conditions (Thunderstorms, Heavy Rains, Atmospheric Hazards)
     const matchesSevereThunderstormRange = (conditionId >= 200 && conditionId <= 232);
     const matchesExtremeTorrentialRain = (conditionId === 502 || conditionId === 503 || conditionId === 504);
-    const matchesAtmosphericAnomalies = (conditionId >= 711 && conditionId <= 781); // Smoke, Volcanic Ash, Tornadoes
+    const matchesAtmosphericAnomalies = (conditionId >= 711 && conditionId <= 781); 
 
     if (matchesSevereThunderstormRange || matchesExtremeTorrentialRain || matchesAtmosphericAnomalies) {
         alertSystemBanner.innerText = "⚠️ SYSTEM ADVISORY: High-alert weather anomalies tracking across current sector.";
@@ -158,35 +183,36 @@ function evaluateSystemSafetyAlerts(conditionId) {
     }
 }
 
-/**
- * SYSTEM TRAFFIC CONTROLLER: Input Debounce Layer
- */
 function handleSearchInput(event) {
     const rawValue = event.target.value.trim();
     
     clearTimeout(debounceTimer);
-    if (!rawValue) return;
+    if (!rawValue) {
+        // If they clear the input, start the globe spinning again
+        if (worldGlobe) {
+            worldGlobe.ringsData([]);
+            worldGlobe.controls().autoRotate = true;
+        }
+        return;
+    }
 
     debounceTimer = setTimeout(() => {
         fetchWeather(rawValue);
     }, 450);
 }
 
-// ==========================================================================
-// SYSTEM EVENT WIRE HOOKS
-// ==========================================================================
+// EVENT HOOKS
 const cityInputEl = document.getElementById("city-input");
 
 if (cityInputEl) {
     cityInputEl.addEventListener("input", handleSearchInput);
-
     cityInputEl.addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             const staticQuery = event.target.value.trim();
             if (!staticQuery) return;
             
-            clearTimeout(debounceTimer); // Terminate outstanding typing queues
-            fetchWeather(staticQuery); // Execute hard data push override
+            clearTimeout(debounceTimer);
+            fetchWeather(staticQuery); 
         }
     });
 }
